@@ -7,6 +7,7 @@ function Location(){
    const [locit,setLocit]=useState("");
    const [locsta ,setLocsta]=useState(" ");
     function getdata(){
+     
         if(navigator.geolocation){
           navigator.geolocation.getCurrentPosition(position =>{
             const {latitude ,longitude}=position.coords;
@@ -18,13 +19,19 @@ function Location(){
                 setLocit("");
                 setLocsta("");
             })
-          });
+          },(error) => {
+            alert("Error getting location: " + error.message);
+          }
+          
+          );
         }else{
             alert("Geolocation not available");
         }
     }
     useEffect(()=>{
+      window.alert("This website uses your current location for Real-time Weather Information");
         getdata();
+        
     },[])
    
     
