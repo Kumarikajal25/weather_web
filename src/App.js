@@ -4,6 +4,9 @@ function App() {
   return (
     <>
     <div className="total">
+   
+    
+    
     <Card/>
     </div>
      

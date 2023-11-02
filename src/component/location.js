@@ -2,7 +2,7 @@ import React ,{useState,useEffect} from "react"
 
 
 
-function Location(){
+function Location(props){
      
    const [locit,setLocit]=useState("");
    const [locsta ,setLocsta]=useState(" ");
@@ -15,9 +15,11 @@ function Location(){
             fetch(url).then(res =>res.json()).then(data =>{
                     setLocit(data.address.city);
                     setLocsta(data.address.state);
+                    
             }).catch(()=>{
                 setLocit("");
                 setLocsta("");
+                props.currentLocation("kolkata");
             })
           },(error) => {
             alert("Error getting location: " + error.message);
@@ -29,10 +31,10 @@ function Location(){
         }
     }
     useEffect(()=>{
-      window.alert("This website uses your current location for Real-time Weather Information");
+      
         getdata();
-        
-    },[])
+        props.currentLocation(locit);
+    },[locit])
    
     
     return (

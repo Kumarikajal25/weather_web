@@ -37,10 +37,7 @@ function Card(){
   };
   
  
-  useEffect(() => {
-    getWeatherinfo("Durgapur");
-    
-  },[]);
+  
   const handleEnter = (event) => {
     if (event.key === 'Enter') {
     getWeatherinfo(searchValue);
@@ -55,7 +52,7 @@ function Card(){
             {/* box1 started */}
             <div className="box1">
            <div className="location">
-                   <Location/>
+                   <Location currentLocation={getWeatherinfo}/>
            </div>
                 <div className="date-time">
               <div className="dmy">
