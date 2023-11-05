@@ -85,8 +85,23 @@ function Card(){
     if (dateWithMaxMaxValue !== '' &&  dateWithMinMinValue !=='') {
       const formattedDateforMax = new Date(dateWithMaxMaxValue);
       const formattedDateforMin = new Date(dateWithMinMinValue);
-      alert(`In next coming day on  ${dateBuilder(formattedDateforMax)} temp rise by ${Math.round(maxMaxValue-averageData[0].min)}°c and  In next coming day on ${dateBuilder(formattedDateforMin)} temp drop by ${Math.round(averageData[0].max -minMinValue)}°c
-     `)
+     const mxvalue=Math.round(maxMaxValue-averageData[0].min);
+     const mnvalue=Math.round(averageData[0].max -minMinValue);
+      if(mxvalue==0 && mnvalue!=0){
+         alert(` --WARNING
+         :: Today is the MaxTemp 
+         :: On ${dateBuilder(formattedDateforMin)} will be MinTemp ${mnvalue}°c`);
+      }
+      else if(mnvalue==0 && mxvalue!=0){
+       alert(` --WARNING
+         :: Today is the MinTemp 
+         :: On ${dateBuilder(formattedDateforMax)} will be MaxTemp ${mxvalue}°c`);
+      }
+      else{
+           alert(` --WARNING
+         :: On ${dateBuilder(formattedDateforMax)} will be MaxTemp ${mxvalue}°c 
+         :: On ${dateBuilder(formattedDateforMin)} will be MinTemp ${mnvalue}°c `);
+      }
     } else {
       console.log('No data found');
     }
