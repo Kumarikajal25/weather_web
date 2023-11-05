@@ -34,6 +34,7 @@ function Location(props){
       
         getdata();
         props.currentLocation(locit);
+        
     },[locit])
    
     

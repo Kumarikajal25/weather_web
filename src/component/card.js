@@ -14,9 +14,7 @@ function Card(){
     const [searchValue,setSearchValue]=useState("");
     const [error, setError] = useState("");
   const [weather, setWeather] = useState([]);
- 
- 
-    
+  const temperatureDataByDate = {};
   const getWeatherinfo = (city) => {
     axios
       .get(
@@ -25,24 +23,87 @@ function Card(){
         }&units=metric&APPID=${apikey.key}`
       )
       .then((response) => {
+       
         setWeather(response.data);
+       const receivedTemperature = response.data.main.temp;
+     getDailybasisData(city,receivedTemperature);
         setSearchValue("");
       })
       .catch(function (error) {
         console.log(error);
         setWeather("");
+
         setSearchValue("");
+        getDailybasisData();
         setError({ message: "Not Found", searchValur: searchValue });
+       
       });
   };
   
- 
-  
+ const getDailybasisData=(city,receivedTemperature)=>{
+  axios
+    .get(
+      `${apikey.base}forecast?q=${city}&units=metric&exclude=current,minutely,hourly&appid=${apikey.key}`
+    )
+    .then((response) => {
+      if (response.data.list) {
+        response.data.list.forEach((day) => {
+          const date = day.dt_txt.split(" ")[0];
+          const temperature = day.main.temp;
+          if (!temperatureDataByDate[date]) {
+            temperatureDataByDate[date] = [];
+          }
+        
+          temperatureDataByDate[date].push(temperature);
+        });       
+     console.log(temperatureDataByDate);
+     const averageData = Object.keys(temperatureDataByDate).map(date => {
+      const temperatures =temperatureDataByDate[date];
+      const max = Math.max(...temperatures);
+      const min = Math.min(...temperatures);
+      return { date, max,min};
+    });
+    console.log(averageData);
+    let maxMaxValue = -Infinity;
+    let minMinValue = Infinity;
+    let dateWithMaxMaxValue = '';
+    let dateWithMinMinValue='';
+   
+    for (let i = 1; i < averageData.length; i++) {
+      const item = averageData[i];
+      if (item.max > maxMaxValue) {
+        maxMaxValue = item.max;
+        dateWithMaxMaxValue = item.date;
+      }
+      if (item.min < minMinValue) {
+        minMinValue = item.min;
+        dateWithMinMinValue = item.date;
+      
+      }
+    }
+    
+    if (dateWithMaxMaxValue !== '' &&  dateWithMinMinValue !=='') {
+      const formattedDateforMax = new Date(dateWithMaxMaxValue);
+      const formattedDateforMin = new Date(dateWithMinMinValue);
+      alert(`In next coming day on  ${dateBuilder(formattedDateforMax)} temp rise by ${Math.round(maxMaxValue-averageData[0].min)}°c and  In next coming day on ${dateBuilder(formattedDateforMin)} temp drop by ${Math.round(averageData[0].max -minMinValue)}°c
+     `)
+    } else {
+      console.log('No data found');
+    }
+      } else {
+        console.log("No 'list' data in the API response.");
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });  }
+     
   const handleEnter = (event) => {
     if (event.key === 'Enter') {
     getWeatherinfo(searchValue);
     }
   };
+  
   
 
     return(
@@ -52,7 +113,9 @@ function Card(){
             {/* box1 started */}
             <div className="box1">
            <div className="location">
-                   <Location currentLocation={getWeatherinfo}/>
+                   <Location currentLocation={getWeatherinfo}  />
+                  
+                  
            </div>
                 <div className="date-time">
               <div className="dmy">
@@ -117,7 +180,7 @@ function Card(){
                  </div>
                 
                  </div>
-               
+              
         </>
     )
 }
